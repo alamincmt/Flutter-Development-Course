@@ -1,0 +1,5 @@
+class OnClickInterface{
+
+  void onClick(){}
+
+}
