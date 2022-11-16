@@ -11,9 +11,6 @@ class _TasbihState extends State<Tasbih> {
   int _counter = 0;
   int _kalimaShahadatCount = 0;
 
-  int maxTime = 33;
-  String congratulationMessage = "";
-
   void _increment() {
     setState(() {
       _counter++;
@@ -23,15 +20,12 @@ class _TasbihState extends State<Tasbih> {
   void _kalimaShahadatCountIncreement() {
     setState(() {
       _kalimaShahadatCount++;
-      if(_kalimaShahadatCount >= maxTime){
-        congratulationMessage = "Congratulations You completed $maxTime counts. ";
-      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         ElevatedButton(
@@ -45,7 +39,7 @@ class _TasbihState extends State<Tasbih> {
           child: const Text('Laa-Ilaha-Illallah'),
         ),
         const SizedBox(width: 16),
-        Text('Kalima Count: $_kalimaShahadatCount $congratulationMessage'),
+        Text('Kalima Count: $_kalimaShahadatCount'),
       ],
     );
   }
