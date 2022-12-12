@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quiz_app/api/APIService.dart';
 
 class UserLogin extends StatefulWidget {
   const UserLogin({Key? key}) : super(key: key);
@@ -8,6 +9,10 @@ class UserLogin extends StatefulWidget {
 }
 
 class _UserLoginState extends State<UserLogin> {
+
+  final userNameController = TextEditingController();
+  final passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -38,10 +43,11 @@ class _UserLoginState extends State<UserLogin> {
                     TextField(
                       keyboardType: TextInputType.emailAddress,
                       style: TextStyle(color: Colors.black),
+                      controller: userNameController,
                       decoration: InputDecoration(
                           fillColor: Colors.grey.shade100,
                           filled: true,
-                          hintText: "Email",
+                          hintText: "Username",
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10))),
                     ),
@@ -51,6 +57,7 @@ class _UserLoginState extends State<UserLogin> {
                     TextField(
                       keyboardType: TextInputType.visiblePassword,
                       style: TextStyle(color: Colors.black),
+                      controller: passwordController,
                       decoration: InputDecoration(
                           fillColor: Colors.grey.shade100,
                           filled: true,
@@ -64,10 +71,19 @@ class _UserLoginState extends State<UserLogin> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'Sign in',
-                          style: TextStyle(
-                              fontSize: 25, fontWeight: FontWeight.w700),
+                        TextButton(
+                          onPressed: () {
+                            APIService apiService = new APIService();
+                            apiService.login(userNameController.text.trim(), passwordController.text.trim()).then((value) => {
+                            print('Response from server is: $value')
+                            });
+                          },
+                          child: Text(
+                            'Sign In',
+                            style: TextStyle(
+                                fontSize: 25, fontWeight: FontWeight.w700),
+                            textAlign: TextAlign.end, //aligment
+                          ),
                         ),
                         CircleAvatar(
                           radius: 30,
