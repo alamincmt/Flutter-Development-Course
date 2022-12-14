@@ -75,7 +75,7 @@ class _UserLoginState extends State<UserLogin> {
                           onPressed: () {
                             APIService apiService = new APIService();
                             apiService.login(userNameController.text.trim(), passwordController.text.trim()).then((value) => {
-                            print('Response from server is: $value')
+                              Navigator.pushNamed(context, 'sura_list')
                             });
                           },
                           child: Text(
