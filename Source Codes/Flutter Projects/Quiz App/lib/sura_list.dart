@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:quiz_app/api/APIService.dart';
+import 'dart:convert';
 
-import 'model/sura_data.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class SuraList extends StatefulWidget {
   const SuraList({Key? key}) : super(key: key);
@@ -12,64 +12,93 @@ class SuraList extends StatefulWidget {
 
 class _SuraListState extends State<SuraList> {
 
-  final userNameController = TextEditingController();
-  final passwordController = TextEditingController();
+  Map? mainResponse;
+  List? suraData;
 
-  Future<List<SuraData>> getSuraList(){
-    APIService apiService = new APIService();
-    return apiService.suraList();
+  Future getData() async {
+    http.Response response = await http.get(Uri.http("api.alquran.cloud", "/v1/surah"));
+    mainResponse = json.decode(response.body);
+    setState(() {
+      suraData = mainResponse!["data"];
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    print("initState() called");
+    getData();
+  }
+
+
+  @override
+  void didChangeDependencies() {
+    print("didChangeDependencies() called");
+  }
+
+
+  @override
+  bool get mounted {
+    print("mounted() called");
+    return true;
+  }
+
+  @override
+  void deactivate() {
+    print("deactivate() called");
+
+  }
+
+  @override
+  void dispose() {
+    print("dispose() called");
+
+  }
+
+  @override
+  void activate() {
+    print("activate() called");
+  }
+
+
+  @override
+  void reassemble() {
+    print("reassemble() called");
   }
 
   @override
   Widget build(BuildContext context) {
+    print("build() called");
 
-    return Container(
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('assets/login.png'), fit: BoxFit.cover)),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Stack(
-          children: [
-            Container(
-              padding: EdgeInsets.only(left: 35, top: 110),
-              child: Text(
-                'Welcome\nto Al-Quran Sura List',
-                style: TextStyle(color: Colors.white, fontSize: 30),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Al-Quran Sura List"),
+        backgroundColor: Colors.green,
+      ),
+      body: ListView.builder(
+        itemCount: suraData == null ? 0 : suraData!.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Card(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                children: <Widget>[
+                  CircleAvatar(
+                    backgroundImage: NetworkImage('https://reqres.in/img/faces/1-image.jpg'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text("${suraData![index]["englishName"]} ${suraData![index]["englishNameTranslation"]}",
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.w700,
+                      ),),
+                  )
+                ],
               ),
             ),
-            SingleChildScrollView(
-              child: Container(
-                padding: EdgeInsets.only(
-                  left: 15,
-                  right: 15,
-                  top: MediaQuery.of(context).size.height * 0.5,
-                ),
-                child: FutureBuilder(
-                  future: getSuraList(),
-                  builder: (BuildContext ctx, AsyncSnapshot snapshot) {
-                    if (snapshot.data == null) {
-                      return Container(
-                        child: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-                    } else {
-                      return ListView.builder(
-                        itemCount: snapshot.data.length,
-                        itemBuilder: (ctx, index) => ListTile(
-                          title: Text(snapshot.data[index].namne),
-                          subtitle: Text(snapshot.data[index].numberOfAyahs),
-                          contentPadding: EdgeInsets.only(bottom: 20.0),
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ),
-            )
-          ],
-        ),
+          );
+        },
       ),
     );
   }
