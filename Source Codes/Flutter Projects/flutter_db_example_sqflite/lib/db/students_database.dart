@@ -42,19 +42,80 @@ class StudentsDatabase{
         ${StudentTable.phone_number} $textType,
         ${StudentTable.email} $textType,
         ${StudentTable.created_at} $textType,
-        ${StudentTable.updated_at} $textType,
+        ${StudentTable.updated_at} $textType
       )
     ''');
   }
 
   Future<Student> create(Student student) async {
     final db = await instance.database;
-
-
     final id = await db.insert(studentTable, student.toJson());
     return student.copy(id: id);
   }
 
+  Future<Student> getStudentById(int id) async {
+    final db = await instance.database;
+
+    final maps = await db.query(
+      studentTable,
+      columns: StudentTable.values,
+      where: '${StudentTable.id} = ?',
+      whereArgs: [id],
+    );
+
+    if (maps.isNotEmpty) {
+      return Student.fromJson(maps.first);
+    } else {
+      throw Exception('ID $id not found');
+    }
+  }
+
+  Future<Student> searchStudent(String searchText) async {
+    final db = await instance.database;
+
+    // final maps = await db.query(
+    //   studentTable,
+    //   columns: StudentTable.values,
+    //   where: '${StudentTable.id} = ?',
+    //   whereArgs: [id],
+    // );
+
+    /*await db.query('my_table',
+        where: "name LIKE ? and roll_number = ? and email = ?",
+        whereArgs: ['$searchText%', searchText, searchText],
+        orderBy: 'id',
+        limit: 10);*/
+
+    final searchResultMap = await db.rawQuery('select * from ${studentTable} where _id like ${searchText} or name like ${searchText}');
+
+    if (searchResultMap.isNotEmpty) {
+      return Student.fromJson(searchResultMap.first);
+    } else {
+      throw Exception('Search result not found');
+    }
+  }
+
+  Future<List<Student>> getAllStudent() async {
+    final db = await instance.database;
+    final result = await db.query(studentTable);
+    return result.map((e) => Student.fromJson(e)).toList();
+  }
+
+  Future<int> update(Student student) async {
+    final db = await instance.database;
+    return db.update(studentTable, student.toJson(), where: '${StudentTable.id} = ?', whereArgs: [student.id]);
+  }
+
+  Future<int> delete(int id) async {
+    final db = await instance.database;
+    // return await db.delete(studentTable); // to delete all the data from db.
+    return await db.delete(studentTable, where: '${StudentTable.id} = ?', whereArgs: [id]);
+  }
+
+  Future close() async {
+    final db = await instance.database;
+    db.close();
+  }
 
 
 }
