@@ -7,7 +7,7 @@ import 'package:quiz_app/model/user_data.dart';
 class APIService{
 
   Future<String> login(String username, String password) async{
-    var url = Uri.https('euit-flutter.bondhusoft.com', '/api-test/login.php');
+    var url = Uri.http('euit-flutter.bondhusoft.com', '/api-test/login.php');
     var response = await http.post(url, body: {
       'username': username,
       'password': password

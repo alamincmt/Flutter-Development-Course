@@ -83,9 +83,6 @@ class _SuraListState extends State<SuraList> {
               padding: const EdgeInsets.all(10.0),
               child: Row(
                 children: <Widget>[
-                  CircleAvatar(
-                    backgroundImage: NetworkImage('https://reqres.in/img/faces/1-image.jpg'),
-                  ),
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Text("${suraData![index]["englishName"]} ${suraData![index]["englishNameTranslation"]}",
